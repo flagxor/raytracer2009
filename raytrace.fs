@@ -13,6 +13,11 @@ divisor divisor * constant divisor2
 : image-size-text s" 320 240" ;
 
 \ --------------------------------------------------------------
+( Added 2021 to "ignore" divide by zero )
+
+: */ dup 0= if drop 2drop divisor2 else */ then ;
+
+\ --------------------------------------------------------------
 ( basic convenience words )
 
 : 3dup   dup >r over >r >r over r> swap r> r> ;
@@ -35,7 +40,7 @@ divisor divisor * constant divisor2
 : sqrt-step-d ( square guess -- square guess-delta )
     2dup divisor swap */ over - 2 / ;  ( NOTE: must be 2 /, not 2/ )
 : sqrt-raw-d ( square -- root )
-    1 begin sqrt-step-d dup while + repeat drop nip ;
+    1 begin sqrt-step-d dup abs 1 > while + repeat drop nip ;
 : sqrt-d ( square -- root ) dup 0<= if drop 0 else sqrt-raw-d then ;
 
 \ --------------------------------------------------------------
@@ -625,7 +630,7 @@ camera-vspan @ width height */ camera-hspan !
 : cast-one   2dup camera-ray ray-cast plot ;
 : frame   camera-init gather-lights
           height 0 do width 0 do i j
-          cast-one loop i .  loop cr ;
+          cast-one loop i . loop cr ;
 
 \ --------------------------------------------------------------
 ( phong sample )
